@@ -10,7 +10,7 @@ if __name__ == '__main__':
     ]
     descriptions_path = "input/cappex_majors.csv"
     targets_path = "input/banner_majors.csv"
-    print_results = False
+    print_results = True
 
     descriptions = sorted(csv_to_list(descriptions_path))
     targets = csv_to_list(targets_path)
@@ -19,10 +19,10 @@ if __name__ == '__main__':
         export_to_csv(model, descriptions, matches)
 
         if print_results:
-            print(f"Using model {model}")
+            print(f"\nUsing model {model}")
             for d, (match, sim) in zip(descriptions, matches):
-                print(f"'{d}' ?= '{match}': similarity {sim:.2f}")
-            print('\n')
+                print(f"'{d}' ?= '{match}': {sim:.2f}")
+
 
 """
 Models come from 
