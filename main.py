@@ -12,7 +12,7 @@ if __name__ == '__main__':
     targets_path = "input/banner_majors.csv"
     print_results = False
 
-    descriptions = sorted(csv_to_list(descriptions_path)[:20])
+    descriptions = sorted(csv_to_list(descriptions_path))
     targets = csv_to_list(targets_path)
     for model in models:
         matches = find_best_matches(descriptions, targets, model=model)
