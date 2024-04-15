@@ -5,20 +5,25 @@ from gpt_match import find_best_matches
 if __name__ == '__main__':
     models = [
         "text-embedding-3-small",  # 62_500 pages per 1USD, 62.3% performance
+        "text-embedding-ada-002",  # 12,500 pages per 1USD, 61.0%% performance
         "text-embedding-3-large",  # 9,615 pages per 1USD, 64.6% performance
-        "text-embedding-ada-002"   # 12,500 pages per 1USD, 61.0%% performance
     ]
-    descriptions = csv_to_list("input/banner_majors.csv")
-    targets = csv_to_list("input/cappex_majors.csv")
+    descriptions_path = "input/cappex_majors.csv"
+    targets_path = "input/banner_majors.csv"
+    print_results = False
 
+    descriptions = sorted(csv_to_list(descriptions_path)[:20])
+    targets = csv_to_list(targets_path)
     for model in models:
-        print(f"Using model {model}")
         matches = find_best_matches(descriptions, targets, model=model)
-        for d, (match, sim) in zip(descriptions, matches):
-            print(f"Best match for '{d}' is '{match}' with similarity {sim:.2f}")
         export_to_csv(model, descriptions, matches)
-        print('\n')
+
+        if print_results:
+            print(f"Using model {model}")
+            for d, (match, sim) in zip(descriptions, matches):
+                print(f"'{d}' ?= '{match}': similarity {sim:.2f}")
+            print('\n')
 
 """
-Models come from https://platform.openai.com/docs/guides/embeddings/embedding-models
+Models come from 
 """
