@@ -1,3 +1,4 @@
+from sklearn.metrics.pairwise import cosine_similarity
 from openai import OpenAI
 import numpy as np
 import os
@@ -40,28 +41,16 @@ def get_embeddings(text_list, model: str, batch_size: int, print_every: int) -> 
     return embeddings
 
 
-def cosine_similarity(vec1, vec2):
-    """
-    Calculate cosine similarity between two vectors.
-    :param vec1: vector 1
-    :param vec2: vector 2
-    :return: dot product of the two vectors divided by the product of their magnitudes
-    """
-    vec1 = np.array(vec1)
-    vec2 = np.array(vec2)
-    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
-
-
 def find_best_matches(descriptions: list[str], targets: list[str], model="text-embedding-3-large",
                       batch_size=50, print_every=100) -> list:
     """
-    Find the best matches for a list of descriptions and targets.
-    :param descriptions: list of descriptions
-    :param targets: list of targets
+    Find the best matches for a list of descriptions from a list of targets using the specified model.
+    :param descriptions: descriptions to match
+    :param targets: targets to match against
     :param model: model to use for embeddings
-    :param batch_size: number of descriptions to process at once
-    :param print_every: print progress every n descriptions
-    :return: best matches for each description
+    :param batch_size: size of the batches to process
+    :param print_every: print progress every n texts
+    :return: list of best matches
     """
     print("Getting embeddings for descriptions...")
     desc_embeddings = get_embeddings(descriptions,
@@ -73,14 +62,15 @@ def find_best_matches(descriptions: list[str], targets: list[str], model="text-e
                                        model=model,
                                        batch_size=batch_size,
                                        print_every=print_every)
+    desc_embeddings = np.array(desc_embeddings)
+    target_embeddings = np.array(target_embeddings)
 
-    best_matches = []
     print("Calculating similarities...")
-    for index, desc_emb in enumerate(desc_embeddings):
-        similarities = [cosine_similarity(desc_emb, targ_emb) for targ_emb in target_embeddings]
-        best_match_idx = np.argmax(similarities)
-        best_matches.append((targets[best_match_idx], max(similarities)))
-
+    similarities = cosine_similarity(desc_embeddings, target_embeddings)
+    best_matches = []
+    for index, similarity_vector in enumerate(similarities):
+        best_match_idx = np.argmax(similarity_vector)
+        best_matches.append((targets[best_match_idx], similarity_vector[best_match_idx]))
         if print_every > 1 and index % print_every == 0:
             print(f"   Processed {index} similarities")
 
