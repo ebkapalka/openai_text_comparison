@@ -10,7 +10,7 @@ if __name__ == '__main__':
     ]
     descriptions_path = "input/cappex_majors.csv"
     targets_path = "input/banner_majors.csv"
-    print_results = True
+    print_results = False
 
     descriptions = sorted(csv_to_list(descriptions_path))
     targets = csv_to_list(targets_path)
