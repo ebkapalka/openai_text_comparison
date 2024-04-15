@@ -22,6 +22,7 @@ if __name__ == '__main__':
             print(f"\nUsing model {model}")
             for d, (match, sim) in zip(descriptions, matches):
                 print(f"'{d}' ?= '{match}': {sim:.2f}")
+            print()
 
 
 """
