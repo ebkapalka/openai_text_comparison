@@ -29,15 +29,15 @@ def get_embeddings(text_list, model: str, batch_size: int, print_every: int) -> 
         embeddings.extend(batch_embeddings)
 
         # Define more clear variables for progress tracking
-        current_count = i + len(batch)  # Current position in the text list
-        is_progress_step = (current_count % print_every == 0)  # Check if it's time to print progress
-        is_final_batch = current_count >= total  # Check if this is the final batch
+        if print_every > 1:
+            current_count = i + len(batch)  # Current position in the text list
+            is_progress_step = (current_count % print_every == 0)  # Check if it's time to print progress
+            is_final_batch = current_count >= total  # Check if this is the final batch
 
-        if is_progress_step or is_final_batch:
-            print(f"   Processed {current_count} of {total} texts")
+            if is_progress_step or is_final_batch:
+                print(f"   Processed {current_count} of {total} texts")
 
     return embeddings
-
 
 
 def cosine_similarity(vec1, vec2):
@@ -80,8 +80,10 @@ def find_best_matches(descriptions: list[str], targets: list[str], model="text-e
         similarities = [cosine_similarity(desc_emb, targ_emb) for targ_emb in target_embeddings]
         best_match_idx = np.argmax(similarities)
         best_matches.append((targets[best_match_idx], max(similarities)))
-        if index % print_every == 0:
+
+        if print_every > 1 and index % print_every == 0:
             print(f"   Processed {index} similarities")
-    if len(descriptions) % print_every != 0:
+
+    if print_every > 1 and len(descriptions) % print_every != 0:
         print(f"   Processed {len(descriptions)} similarities")
     return best_matches
