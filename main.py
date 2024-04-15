@@ -23,8 +23,3 @@ if __name__ == '__main__':
             for d, (match, sim) in zip(descriptions, matches):
                 print(f"'{d}' ?= '{match}': {sim:.2f}")
             print()
-
-
-"""
-Models come from 
-"""
