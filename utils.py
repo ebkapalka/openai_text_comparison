@@ -35,11 +35,11 @@ def export_to_csv(model, descriptions, matches, folder='output'):
     print(f"Results exported to {filename}")
 
 
-def export_combined_results(models, descriptions, all_results, folder='output'):
+def export_combined_results(filenames: list[str], descriptions, all_results, folder='output'):
     """
     Export combined results to a CSV file with each model's results in separate columns.
-    :param models: list of models used for embeddings
-    :param descriptions: list of major descriptions
+    :param filenames: the method or model names used for matching
+    :param descriptions: descriptions (incoming data) used in matching
     :param all_results: dictionary of matches from each model
     :param folder: output directory
     """
@@ -47,15 +47,15 @@ def export_combined_results(models, descriptions, all_results, folder='output'):
     filename = f"{folder}/combined_results_{timestamp()}.csv"
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
-        # Prepare header with model names
-        headers = ['Major'] + [f'{model} Match' for model in models]
+        # Prepare header with accurate names
+        headers = ['Major'] + [f'{name} Match' for name in filenames]
         writer.writerow(headers)
 
         # Iterate over each description and write rows for each
         for i, desc in enumerate(descriptions):
             row = [desc]
-            for model in models:
-                match, sim = all_results[model][i]  # Retrieve match and similarity for this model
+            for name in filenames:
+                match, sim = all_results[name][i]  # Retrieve match and similarity for this column
                 row.append(f"{match} ({sim:.2f})")  # Append result in format "Match (Similarity)"
             writer.writerow(row)
 
